@@ -1,10 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-// Ensure HomePage is correctly imported
-import 'package:gymapp/pages/signup.dart';
-
-import '../bnav.dart';     // Ensure SignUpPage is correctly imported
+import 'package:gymapp/pages/signup.dart'; // Ensure SignUpPage is correctly imported
+import '../bnav.dart'; // Ensure BottomNavBar is correctly imported
 
 class LoginPage extends StatefulWidget {
   @override
@@ -16,6 +14,26 @@ class _LoginPageState extends State<LoginPage> {
   TextEditingController password = TextEditingController();
   bool isPasswordVisible = false;
 
+  SignIn() async {
+    if (email.text.isEmpty || password.text.isEmpty) {
+      Get.snackbar("Error", "Please fill all the Text fields",
+          backgroundColor: Colors.red);
+      return;
+    }
+    try {
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
+          email: email.text, password: password.text);
+      Get.snackbar("Login", "Login Successful", backgroundColor: Colors.green);
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => BottomNavBar()),
+      );
+    } catch (e) {
+      Get.snackbar("Error", "Something went wrong: $e",
+          backgroundColor: Colors.red);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -24,12 +42,11 @@ class _LoginPageState extends State<LoginPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Banner Image (using local image)
             Container(
               height: 300,
               decoration: const BoxDecoration(
                 image: DecorationImage(
-                  image: AssetImage('assets/images/login_background.jpg'), // Local image
+                  image: AssetImage('assets/images/login_background.jpg'),
                   fit: BoxFit.cover,
                 ),
               ),
@@ -133,10 +150,9 @@ class _LoginPageState extends State<LoginPage> {
                     width: double.infinity,
                     height: 50,
                     child: ElevatedButton(
-                     onPressed: () {
-                       Navigator.push(context,MaterialPageRoute(builder: (context)=>BottomNavBar()));
-                     }, // Trigger the SignIn method on button press
-
+                      onPressed: () {
+                        SignIn(); // Trigger the SignIn method
+                      },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.teal,
                         shape: RoundedRectangleBorder(
@@ -161,9 +177,9 @@ class _LoginPageState extends State<LoginPage> {
                     children: [
                       Expanded(
                           child: Divider(
-                            color: Colors.grey,
-                            thickness: 1,
-                          )),
+                        color: Colors.grey,
+                        thickness: 1,
+                      )),
                       Padding(
                         padding: EdgeInsets.symmetric(horizontal: 8),
                         child: Text(
@@ -173,9 +189,9 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                       Expanded(
                           child: Divider(
-                            color: Colors.grey,
-                            thickness: 1,
-                          )),
+                        color: Colors.grey,
+                        thickness: 1,
+                      )),
                     ],
                   ),
 
@@ -230,7 +246,7 @@ class _LoginPageState extends State<LoginPage> {
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => SignUpPage()));
+                                    builder: (context) => SignUp()));
                           },
                           child: const Text(
                             'Sign up',
