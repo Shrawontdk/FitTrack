@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart'; // Firestore dependency
-import 'package:gymapp/pages/login.dart'; // Import the LoginPage
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:gymapp/pages/login.dart';
+import 'package:gymapp/pages/termsandconditions.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -17,10 +19,12 @@ class _ProfilePageState extends State<ProfilePage> {
   String weight = "";
   String height = "";
   String age = "";
-
   bool _isMuted = false;
 
-  // Function to fetch user data from Firestore
+  // Theme mode variable
+  ThemeMode _themeMode = ThemeMode.light;
+
+  // Fetch user data from Firestore
   Future<void> _fetchUserData() async {
     User? user = FirebaseAuth.instance.currentUser;
 
@@ -31,7 +35,6 @@ class _ProfilePageState extends State<ProfilePage> {
           .get();
 
       if (userDoc.exists) {
-        // Safely check if fields exist before accessing
         setState(() {
           name = userDoc['name'] ?? "Unknown";
           email = userDoc['email'] ?? "No email";
@@ -45,163 +48,161 @@ class _ProfilePageState extends State<ProfilePage> {
     }
   }
 
+  // Load preferences for mute state and theme mode
+  Future<void> _loadPreferences() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _isMuted = prefs.getBool('isMuted') ?? false;
+      String? savedTheme = prefs.getString('themeMode') ?? 'light';
+      _themeMode = savedTheme == 'dark' ? ThemeMode.dark : ThemeMode.light;
+    });
+  }
+
+  // Save theme mode to SharedPreferences
+  Future<void> _saveThemeMode(ThemeMode themeMode) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('themeMode', themeMode == ThemeMode.dark ? 'dark' : 'light');
+  }
+
   @override
   void initState() {
     super.initState();
-    _fetchUserData(); // Fetch user data when the page is loaded
-  }
-
-  // Function to show the confirmation dialog for logout
-  Future<void> _showLogoutDialog(BuildContext context) async {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Confirm Logout'),
-          content: const Text('Are you sure you want to logout?'),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop(); // Close the dialog
-              },
-              child: const Text('No'),
-            ),
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop(); // Close the dialog
-                FirebaseAuth.instance.signOut(); // Log out the user
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => LoginPage()), // Redirect to login
-                );
-              },
-              child: const Text('Yes'),
-            ),
-          ],
-        );
-      },
-    );
+    _fetchUserData();
+    _loadPreferences();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        title: const Text(
-          'Profile Page',
-          style: TextStyle(
-              color: Colors.black, fontWeight: FontWeight.bold, fontSize: 20),
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData.light(),
+      darkTheme: ThemeData.dark(),
+      themeMode: _themeMode,
+      home: Scaffold(
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor, // Ensure background color follows theme
+        appBar: AppBar(
+          title: const Text('Profile Page'),
+          centerTitle: true,
+          backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
+          iconTheme: Theme.of(context).iconTheme, // Ensure icons use the correct theme
         ),
-        centerTitle: true,
-        backgroundColor: Colors.white,
-        elevation: 0,
-        iconTheme: const IconThemeData(color: Colors.black),
-      ),
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            const SizedBox(height: 16),
-
-            // Profile Image and Details
-            const CircleAvatar(
-              radius: 50,
-              backgroundImage: NetworkImage(
-                  'https://cdn-icons-png.flaticon.com/512/147/147142.png'), // Default Image
-            ),
-            const SizedBox(height: 8),
-            Text(
-              name, // Display user's name
-              style: const TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black),
-            ),
-            const SizedBox(height: 4),
-            Text(
-              email, // Display user's email
-              style: TextStyle(fontSize: 14, color: Colors.grey.shade700),
-            ),
-
-            const SizedBox(height: 16),
-
-            // Weight, Height, Age Section
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        body: Theme(  // Explicitly wrap the body with the correct theme
+          data: Theme.of(context), // Use current theme
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                buildInfoColumn(weight, "Weight"),
-                VerticalDivider(thickness: 1, color: Colors.grey.shade400),
-                buildInfoColumn(height, "Height"),
-                VerticalDivider(thickness: 1, color: Colors.grey.shade400),
-                buildInfoColumn(age, "Age"),
+                const SizedBox(height: 16),
+
+                // Profile Image and Details
+                const CircleAvatar(
+                  radius: 50,
+                  backgroundImage: NetworkImage(
+                      'https://cdn-icons-png.flaticon.com/512/147/147142.png'),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  name,
+                  style: Theme.of(context).textTheme.titleLarge, // Use theme for text styling
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  email,
+                  style: Theme.of(context).textTheme.titleMedium, // Use theme for text styling
+                ),
+
+                const SizedBox(height: 16),
+
+                // Weight, Height, Age Section
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    buildInfoColumn(weight, "Weight"),
+                    VerticalDivider(thickness: 1, color: Colors.grey.shade400),
+                    buildInfoColumn(height, "Height"),
+                    VerticalDivider(thickness: 1, color: Colors.grey.shade400),
+                    buildInfoColumn(age, "Age"),
+                  ],
+                ),
+
+                Divider(thickness: 1, color: Colors.grey.shade300, height: 32),
+
+                // Mute Notification
+                ListTile(
+                  leading: const Icon(Icons.notifications),
+                  title: const Text("Mute Notification"),
+                  trailing: Switch(
+                    value: _isMuted,
+                    onChanged: (bool value) {
+                      setState(() {
+                        _isMuted = value;
+                      });
+                      SharedPreferences.getInstance().then(
+                              (prefs) => prefs.setBool('isMuted', value));
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                            _isMuted
+                                ? 'Notifications are muted'
+                                : 'Mute notification is disabled',
+                          ),
+                          duration: const Duration(seconds: 2),
+                          behavior: SnackBarBehavior.floating,
+                          backgroundColor: _isMuted ? Colors.red : Colors.green, // Set colors
+                        ),
+                      );
+                    },
+                  ),
+                ),
+
+                Divider(thickness: 1, color: Colors.grey.shade300),
+
+                // Theme Toggle
+                ListTile(
+                  leading: const Icon(Icons.brightness_6),
+                  title: const Text("Theme Mode"),
+                  trailing: DropdownButton<ThemeMode>(
+                    value: _themeMode,
+                    onChanged: (ThemeMode? newValue) {
+                      if (newValue != null) {
+                        setState(() {
+                          _themeMode = newValue;
+                        });
+                        _saveThemeMode(newValue);
+                      }
+                    },
+                    items: const [
+                      DropdownMenuItem(
+                        value: ThemeMode.light,
+                        child: Text("Light"),
+                      ),
+                      DropdownMenuItem(
+                        value: ThemeMode.dark,
+                        child: Text("Dark"),
+                      ),
+                    ],
+                  ),
+                ),
+
+                Divider(thickness: 1, color: Colors.grey.shade300),
+
+                // Terms & Conditions
+                buildListTile(
+                  Icons.article_outlined,
+                  "Terms & Conditions",
+                      () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const TermsAndConditionsPage(),
+                      ),
+                    );
+                  },
+                ),
+                const SizedBox(height: 24),
               ],
             ),
-
-            Divider(thickness: 1, color: Colors.grey.shade300, height: 32),
-
-            // Mute Notification
-            ListTile(
-              leading: const Icon(Icons.notifications, color: Colors.black),
-              title: const Text(
-                "Mute Notification",
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-              ),
-              trailing: Switch(
-                value: _isMuted, // The value is bound to _isMuted
-                onChanged: (bool value) {
-                  setState(() {
-                    _isMuted =
-                        value; // Update the state when the switch is toggled
-                  });
-                },
-              ),
-            ),
-            Divider(thickness: 1, color: Colors.grey.shade300),
-
-            // Account Section
-            buildListTile(Icons.account_circle, "Account", () {}),
-            Divider(thickness: 1, color: Colors.grey.shade300),
-
-            // Privacy Policy
-            buildListTile(Icons.privacy_tip, "Privacy Policy", () {}),
-            Divider(thickness: 1, color: Colors.grey.shade300),
-
-            // Terms & Conditions
-            buildListTile(Icons.article_outlined, "Term & Condition", () {}),
-
-            const SizedBox(height: 24),
-
-            // Logout Button
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: ElevatedButton(
-                onPressed: () {
-                  _showLogoutDialog(
-                      context); // Show the logout confirmation dialog
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.red.shade100,
-                  elevation: 0,
-                  padding: const EdgeInsets.symmetric(vertical: 14),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                ),
-                child: const Center(
-                  child: Text(
-                    "Logout",
-                    style: TextStyle(
-                        color: Colors.red,
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold),
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(height: 16),
-          ],
+          ),
         ),
       ),
     );
@@ -213,13 +214,12 @@ class _ProfilePageState extends State<ProfilePage> {
       children: [
         Text(
           value,
-          style: const TextStyle(
-              fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black),
+          style: Theme.of(context).textTheme.bodyLarge, // Use theme for text styling
         ),
         const SizedBox(height: 4),
         Text(
           title,
-          style: TextStyle(fontSize: 14, color: Colors.grey.shade600),
+          style: Theme.of(context).textTheme.bodyMedium, // Use theme for text styling
         ),
       ],
     );
@@ -228,21 +228,14 @@ class _ProfilePageState extends State<ProfilePage> {
   // Helper method for ListTile
   ListTile buildListTile(IconData icon, String title, VoidCallback onTap) {
     return ListTile(
-      leading: Icon(icon, color: Colors.black),
+      leading: Icon(icon),
       title: Text(
         title,
-        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+        style: Theme.of(context).textTheme.bodyLarge, // Use theme for text styling
       ),
-      trailing:
-          const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
+      trailing: const Icon(Icons.arrow_forward_ios, size: 16),
       onTap: onTap,
     );
   }
 }
 
-void main() {
-  runApp(MaterialApp(
-    debugShowCheckedModeBanner: false,
-    home: ProfilePage(),
-  ));
-}

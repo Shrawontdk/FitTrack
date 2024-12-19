@@ -23,7 +23,24 @@ class _DietPlanPageState extends State<DietPage> {
   DateTime _selectedDay = DateTime.now();
 
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-      FlutterLocalNotificationsPlugin();
+  FlutterLocalNotificationsPlugin();
+
+  // Controllers for each field (time, calories, food) for each meal
+  TextEditingController breakfastTimeController = TextEditingController();
+  TextEditingController breakfastCalController = TextEditingController();
+  TextEditingController breakfastFoodController = TextEditingController();
+
+  TextEditingController lunchTimeController = TextEditingController();
+  TextEditingController lunchCalController = TextEditingController();
+  TextEditingController lunchFoodController = TextEditingController();
+
+  TextEditingController snackTimeController = TextEditingController();
+  TextEditingController snackCalController = TextEditingController();
+  TextEditingController snackFoodController = TextEditingController();
+
+  TextEditingController dinnerTimeController = TextEditingController();
+  TextEditingController dinnerCalController = TextEditingController();
+  TextEditingController dinnerFoodController = TextEditingController();
 
   @override
   void initState() {
@@ -42,15 +59,14 @@ class _DietPlanPageState extends State<DietPage> {
     );
 
     await flutterLocalNotificationsPlugin
-        .resolvePlatformSpecificImplementation<
-            AndroidFlutterLocalNotificationsPlugin>()
+        .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
         ?.createNotificationChannel(channel);
 
     const AndroidInitializationSettings initializationSettingsAndroid =
-        AndroidInitializationSettings('@mipmap/ic_launcher');
+    AndroidInitializationSettings('@mipmap/ic_launcher');
 
     const InitializationSettings initializationSettings =
-        InitializationSettings(android: initializationSettingsAndroid);
+    InitializationSettings(android: initializationSettingsAndroid);
 
     await flutterLocalNotificationsPlugin.initialize(initializationSettings);
   }
@@ -67,7 +83,7 @@ class _DietPlanPageState extends State<DietPage> {
       }
 
       const AndroidNotificationDetails androidDetails =
-          AndroidNotificationDetails(
+      AndroidNotificationDetails(
         'meal_reminder_channel',
         'Meal Reminders',
         channelDescription: 'Reminders for your meals',
@@ -76,7 +92,7 @@ class _DietPlanPageState extends State<DietPage> {
       );
 
       const NotificationDetails notificationDetails =
-          NotificationDetails(android: androidDetails);
+      NotificationDetails(android: androidDetails);
 
       await flutterLocalNotificationsPlugin.zonedSchedule(
         1,
@@ -86,7 +102,7 @@ class _DietPlanPageState extends State<DietPage> {
         notificationDetails,
         androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
         uiLocalNotificationDateInterpretation:
-            UILocalNotificationDateInterpretation.absoluteTime,
+        UILocalNotificationDateInterpretation.absoluteTime,
       );
 
       if (mounted) {
@@ -112,7 +128,7 @@ class _DietPlanPageState extends State<DietPage> {
 
   Future<void> _showNotification() async {
     const AndroidNotificationDetails androidDetails =
-        AndroidNotificationDetails(
+    AndroidNotificationDetails(
       'meal_reminder_channel',
       'Meal Reminders',
       channelDescription: 'Reminders for your meals',
@@ -121,7 +137,7 @@ class _DietPlanPageState extends State<DietPage> {
     );
 
     const NotificationDetails notificationDetails =
-        NotificationDetails(android: androidDetails);
+    NotificationDetails(android: androidDetails);
 
     await flutterLocalNotificationsPlugin.show(
       0,
@@ -280,7 +296,7 @@ class _DietPlanPageState extends State<DietPage> {
                       Text(
                         'Reminder set for: ${_reminderTime!.toLocal()}',
                         style:
-                            const TextStyle(fontSize: 12, color: Colors.teal),
+                        const TextStyle(fontSize: 12, color: Colors.teal),
                       ),
                   ],
                 ),
@@ -321,72 +337,32 @@ class _DietPlanPageState extends State<DietPage> {
                       color: Colors.teal,
                       shape: BoxShape.circle,
                     ),
-                    defaultTextStyle: const TextStyle(color: Colors.black87),
-                    weekendTextStyle: const TextStyle(color: Colors.black87),
-                  ),
-                  headerStyle: const HeaderStyle(
-                    formatButtonVisible: false,
-                    titleCentered: true,
                   ),
                 ),
               ),
               const SizedBox(height: 16),
 
-              // Today's Meal Section
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text(
-                    "Today's Meal",
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black87,
-                    ),
-                  ),
-                  TextButton(
-                    onPressed: () {},
-                    child: const Text('Edit Diet',
-                        style: TextStyle(color: Colors.teal)),
-                  ),
-                ],
-              ),
-
-              // Meal Cards
-              mealCard('Breakfast', '7:00 - 7:30 am', '~ 500 kcal',
-                  'Oatmeal with Berries and Almonds', imageUrl),
-              mealCard('Lunch', '9:00 - 10:00 am', '~ 500 kcal',
-                  'Grilled Chicken Salad with Quinoa', imageUrl),
-              mealCard('Snack', '1:00 - 1:30 pm', '~ 500 kcal',
-                  'Apple with Peanut Butter', imageUrl),
-              mealCard('Dinner', '7:00 - 8:00 pm', '~ 500 kcal',
-                  'Grilled Salmon with Sweet Potatoes', imageUrl),
+              // Diet Cards
+              mealCard('Breakfast', breakfastTimeController, breakfastCalController, breakfastFoodController),
+              mealCard('Lunch', lunchTimeController, lunchCalController, lunchFoodController),
+              mealCard('Snack', snackTimeController, snackCalController, snackFoodController),
+              mealCard('Dinner', dinnerTimeController, dinnerCalController, dinnerFoodController),
             ],
           ),
-        ),
-      ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => BMIPage()),
-          );
-        },
-        backgroundColor: Colors.teal,
-        icon: const Icon(Icons.edit, color: Colors.white),
-        label: const Text(
-          'Enter BMI',
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
       ),
     );
   }
 
-  Widget mealCard(String title, String time, String calories, String details,
-      String image) {
+  // Meal Card Widget
+  Widget mealCard(
+      String mealType,
+      TextEditingController timeController,
+      TextEditingController calController,
+      TextEditingController foodController) {
     return Container(
+      padding: const EdgeInsets.all(16),
       margin: const EdgeInsets.only(bottom: 16),
-      padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
@@ -399,43 +375,91 @@ class _DietPlanPageState extends State<DietPage> {
         ],
       ),
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Image.network(image, width: 60, height: 60, fit: BoxFit.cover),
+          Image.network(
+            imageUrl,
+            width: 60,
+            height: 60,
+            fit: BoxFit.cover,
+          ),
           const SizedBox(width: 12),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  title,
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black87,
-                  ),
+                  mealType,
+                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
                 Text(
-                  time,
-                  style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
+                  'Time: ${timeController.text.isEmpty ? "Not set" : timeController.text}',
                 ),
                 Text(
-                  details,
-                  style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
+                  'Calories: ${calController.text.isEmpty ? "Not set" : calController.text}',
+                ),
+                Text(
+                  'Food: ${foodController.text.isEmpty ? "Not set" : foodController.text}',
                 ),
               ],
             ),
           ),
-          Text(
-            calories,
-            style: const TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.bold,
-              color: Colors.teal,
-            ),
+          IconButton(
+            icon: const Icon(Icons.edit, color: Colors.blue),
+            onPressed: () {
+              _showEditDietDialog(mealType, timeController, calController, foodController);
+            },
           ),
         ],
       ),
+    );
+  }
+
+  // Edit Diet Dialog for individual meals with 3 fields
+  void _showEditDietDialog(
+      String mealType,
+      TextEditingController timeController,
+      TextEditingController calController,
+      TextEditingController foodController,
+      ) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Edit $mealType'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: timeController,
+                decoration: InputDecoration(labelText: 'Time'),
+              ),
+              TextField(
+                controller: calController,
+                decoration: InputDecoration(labelText: 'Calories'),
+              ),
+              TextField(
+                controller: foodController,
+                decoration: InputDecoration(labelText: 'Food'),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {
+                setState(() {});
+                Navigator.pop(context);
+              },
+              child: const Text('Save'),
+            ),
+          ],
+        );
+      },
     );
   }
 }

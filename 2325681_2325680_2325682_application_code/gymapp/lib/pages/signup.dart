@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart'; // Import Firestore
+import 'package:gymapp/question.dart';
 import '../bnav.dart'; // Import BottomNavBar
 
 class SignUp extends StatelessWidget {
@@ -53,7 +54,7 @@ class SignUp extends StatelessWidget {
         // Navigate to BottomNavBar after successful signup
         Navigator.pushAndRemoveUntil(
           context,
-          MaterialPageRoute(builder: (context) => BottomNavBar()),
+          MaterialPageRoute(builder: (context) => QuestionPage()),
           (route) => false, // Clears the navigation stack
         );
       }).catchError((error) {
