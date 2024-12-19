@@ -3,6 +3,8 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:table_calendar/table_calendar.dart';
+import 'package:gymapp/pages/bmi.dart';
 
 class DietPage extends StatefulWidget {
   @override
@@ -15,6 +17,8 @@ class _DietPlanPageState extends State<DietPage> {
 
   bool _isReminderOn = false;
   DateTime? _reminderTime;
+  DateTime _focusedDay = DateTime.now();
+  DateTime _selectedDay = DateTime.now();
 
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
   FlutterLocalNotificationsPlugin();
@@ -22,13 +26,12 @@ class _DietPlanPageState extends State<DietPage> {
   @override
   void initState() {
     super.initState();
-    tz.initializeTimeZones(); // Initialize time zones
+    tz.initializeTimeZones();
     _initializeNotifications();
-    _loadReminderState(); // Load saved reminder state
+    _loadReminderState();
   }
 
   Future<void> _initializeNotifications() async {
-    // Create a notification channel (Android)
     const AndroidNotificationChannel channel = AndroidNotificationChannel(
       'meal_reminder_channel',
       'Meal Reminders',
@@ -37,10 +40,10 @@ class _DietPlanPageState extends State<DietPage> {
     );
 
     await flutterLocalNotificationsPlugin
-        .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
+        .resolvePlatformSpecificImplementation<
+        AndroidFlutterLocalNotificationsPlugin>()
         ?.createNotificationChannel(channel);
 
-    // Initialize notification settings
     const AndroidInitializationSettings initializationSettingsAndroid =
     AndroidInitializationSettings('@mipmap/ic_launcher');
 
@@ -52,21 +55,19 @@ class _DietPlanPageState extends State<DietPage> {
 
   Future<void> _scheduleNotification(DateTime scheduledTime) async {
     try {
-      // Cancel any existing notifications
       await flutterLocalNotificationsPlugin.cancelAll();
 
       final tz.TZDateTime now = tz.TZDateTime.now(tz.local);
       tz.TZDateTime scheduledDate = tz.TZDateTime.from(scheduledTime, tz.local);
 
-      // If the time is in the past, schedule for the next day
       if (scheduledDate.isBefore(now)) {
         scheduledDate = scheduledDate.add(const Duration(days: 1));
       }
 
       const AndroidNotificationDetails androidDetails = AndroidNotificationDetails(
-        'meal_reminder_channel', // Channel ID
-        'Meal Reminders',       // Channel Name
-        channelDescription: 'Reminders for your meals', // Channel Description
+        'meal_reminder_channel',
+        'Meal Reminders',
+        channelDescription: 'Reminders for your meals',
         importance: Importance.high,
         priority: Priority.high,
       );
@@ -75,7 +76,7 @@ class _DietPlanPageState extends State<DietPage> {
       NotificationDetails(android: androidDetails);
 
       await flutterLocalNotificationsPlugin.zonedSchedule(
-        1, // Notification ID
+        1,
         'Meal Reminder',
         'It\'s time for your scheduled meal!',
         scheduledDate,
@@ -106,6 +107,26 @@ class _DietPlanPageState extends State<DietPage> {
     }
   }
 
+  Future<void> _showNotification() async {
+    const AndroidNotificationDetails androidDetails = AndroidNotificationDetails(
+      'meal_reminder_channel',
+      'Meal Reminders',
+      channelDescription: 'Reminders for your meals',
+      importance: Importance.high,
+      priority: Priority.high,
+    );
+
+    const NotificationDetails notificationDetails =
+    NotificationDetails(android: androidDetails);
+
+    await flutterLocalNotificationsPlugin.show(
+      0,
+      'Reminder Set',
+      'Your diet reminder is now active!',
+      notificationDetails,
+    );
+  }
+
   Future<void> _showDateTimePicker() async {
     final DateTime? pickedDate = await showDatePicker(
       context: context,
@@ -133,7 +154,8 @@ class _DietPlanPageState extends State<DietPage> {
 
         if (_isReminderOn && _reminderTime != null) {
           await _scheduleNotification(_reminderTime!);
-          _saveReminderState(); // Save state
+          await _showNotification();
+          _saveReminderState();
         }
       }
     }
@@ -184,6 +206,7 @@ class _DietPlanPageState extends State<DietPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // Reminder Card
               Container(
                 padding: EdgeInsets.all(16),
                 decoration: BoxDecoration(
@@ -232,7 +255,7 @@ class _DietPlanPageState extends State<DietPage> {
                               setState(() {
                                 _reminderTime = null;
                               });
-                              _saveReminderState(); // Save state
+                              _saveReminderState();
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
                                   content: Text('Reminder cancelled'),
@@ -257,9 +280,155 @@ class _DietPlanPageState extends State<DietPage> {
                   ],
                 ),
               ),
+              SizedBox(height: 16),
+
+              // Calendar
+              Container(
+                padding: EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.shade300,
+                      blurRadius: 6,
+                      offset: Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: TableCalendar(
+                  firstDay: DateTime.utc(2020, 1, 1),
+                  lastDay: DateTime.utc(2030, 12, 31),
+                  focusedDay: _focusedDay,
+                  selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
+                  onDaySelected: (selectedDay, focusedDay) {
+                    setState(() {
+                      _selectedDay = selectedDay;
+                      _focusedDay = focusedDay;
+                    });
+                  },
+                  calendarStyle: CalendarStyle(
+                    todayDecoration: BoxDecoration(
+                      color: Colors.teal.shade100,
+                      shape: BoxShape.circle,
+                    ),
+                    selectedDecoration: BoxDecoration(
+                      color: Colors.teal,
+                      shape: BoxShape.circle,
+                    ),
+                    defaultTextStyle: TextStyle(color: Colors.black87),
+                    weekendTextStyle: TextStyle(color: Colors.black87),
+                  ),
+                  headerStyle: HeaderStyle(
+                    formatButtonVisible: false,
+                    titleCentered: true,
+                  ),
+                ),
+              ),
+              SizedBox(height: 16),
+
+              // Today's Meal Section
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    "Today's Meal",
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black87,
+                    ),
+                  ),
+                  TextButton(
+                    onPressed: () {},
+                    child: Text('Edit Diet', style: TextStyle(color: Colors.teal)),
+                  ),
+                ],
+              ),
+
+              // Meal Cards
+              mealCard('Breakfast', '7:00 - 7:30 am', '~ 500 kcal',
+                  'Oatmeal with Berries and Almonds', imageUrl),
+              mealCard('Lunch', '9:00 - 10:00 am', '~ 500 kcal',
+                  'Grilled Chicken Salad with Quinoa', imageUrl),
+              mealCard('Snack', '1:00 - 1:30 pm', '~ 500 kcal',
+                  'Apple with Peanut Butter', imageUrl),
+              mealCard('Dinner', '7:00 - 8:00 pm', '~ 500 kcal',
+                  'Grilled Salmon with Sweet Potatoes', imageUrl),
             ],
           ),
         ),
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => BMIPage()),
+          );
+        },
+        backgroundColor: Colors.teal,
+        icon: Icon(Icons.edit, color: Colors.white),
+        label: Text(
+          'Enter BMI',
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+        ),
+      ),
+    );
+  }
+
+  Widget mealCard(String title, String time, String calories, String details,
+      String image) {
+    return Container(
+      margin: EdgeInsets.only(bottom: 16),
+      padding: EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.shade300,
+            blurRadius: 6,
+            offset: Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Image.network(image, width: 60, height: 60, fit: BoxFit.cover),
+          SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black87,
+                  ),
+                ),
+                Text(
+                  time,
+                  style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
+                ),
+                Text(
+                  details,
+                  style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
+                ),
+              ],
+            ),
+          ),
+          Text(
+            calories,
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.bold,
+              color: Colors.teal,
+            ),
+          ),
+        ],
       ),
     );
   }
