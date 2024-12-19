@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart'; // Import Firestore
 import '../bnav.dart'; // Import BottomNavBar
 
 class SignUp extends StatelessWidget {
@@ -8,6 +9,9 @@ class SignUp extends StatelessWidget {
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController confirmPasswordController =
       TextEditingController();
+  final TextEditingController weightController = TextEditingController();
+  final TextEditingController ageController = TextEditingController();
+  final TextEditingController heightcontroller = TextEditingController();
 
   void signUpUser(BuildContext context) async {
     try {
@@ -15,7 +19,7 @@ class SignUp extends StatelessWidget {
         throw Exception("Passwords do not match");
       }
 
-      // Creating user with email and password
+      // Create user with email and password
       UserCredential userCredential =
           await FirebaseAuth.instance.createUserWithEmailAndPassword(
         email: emailController.text.trim(),
@@ -28,19 +32,35 @@ class SignUp extends StatelessWidget {
         throw Exception("Failed to retrieve user details");
       }
 
-      // Log the user information for debugging
+      // Log user information for debugging
       print("User signed up: ${user.uid}, ${user.email}");
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Signup successful")),
-      );
+      // Add additional user data (name, weight, and age) to Firestore
+      FirebaseFirestore.instance.collection('users').doc(user.uid).set({
+        'name': nameController.text.trim(),
+        'email': emailController.text.trim(),
+        'weight': weightController.text.trim(),
+        'age': ageController.text.trim(),
+        'height': heightcontroller.text.trim(),
+      }).then((_) {
+        // Show success message
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Signup successful")),
+        );
 
-      // Navigate to BottomNavBar after successful signup
-      Navigator.pushAndRemoveUntil(
-        context,
-        MaterialPageRoute(builder: (context) => BottomNavBar()),
-        (route) => false, // Clears the navigation stack
-      );
+        // Navigate to BottomNavBar after successful signup
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (context) => BottomNavBar()),
+          (route) => false, // Clears the navigation stack
+        );
+      }).catchError((error) {
+        // Handle Firestore errors
+        print("Error adding user data to Firestore: $error");
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Error: ${error.toString()}")),
+        );
+      });
     } catch (e) {
       print("Error during signup: $e");
       ScaffoldMessenger.of(context).showSnackBar(
@@ -128,6 +148,21 @@ class SignUp extends StatelessWidget {
                 controller: confirmPasswordController,
                 obscureText: true,
                 decoration: textFieldDecoration("Confirm Password", Icons.lock),
+              ),
+              SizedBox(height: 15),
+              TextField(
+                controller: weightController,
+                decoration: textFieldDecoration("Weight", Icons.fitness_center),
+              ),
+              SizedBox(height: 15),
+              TextField(
+                controller: ageController,
+                decoration: textFieldDecoration("Age", Icons.calendar_today),
+              ),
+              SizedBox(height: 15),
+              TextField(
+                controller: heightcontroller,
+                decoration: textFieldDecoration("Height", Icons.height),
               ),
               SizedBox(height: 20),
               Center(
