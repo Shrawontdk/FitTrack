@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:gymapp/notifications/notifications.dart';
 
 class SignUp extends StatelessWidget {
   final TextEditingController nameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-  final TextEditingController confirmPasswordController = TextEditingController();
+  final TextEditingController confirmPasswordController =
+      TextEditingController();
 
   void signUpUser(BuildContext context) async {
     if (passwordController.text != confirmPasswordController.text) {
@@ -17,16 +19,22 @@ class SignUp extends StatelessWidget {
     }
 
     try {
-      UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
+      UserCredential userCredential =
+          await FirebaseAuth.instance.createUserWithEmailAndPassword(
         email: emailController.text,
         password: passwordController.text,
       );
 
-      await FirebaseFirestore.instance.collection('users').doc(userCredential.user!.uid).set({
-        'displayName': nameController.text,
-        'email': emailController.text,
-        'uid': userCredential.user!.uid,
-      });
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(userCredential.user!.uid)
+          .set(
+        {
+          'displayName': nameController.text,
+          'email': emailController.text,
+          'uid': userCredential.user!.uid,
+        },
+      );
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("Signup successful")),
@@ -254,7 +262,8 @@ class CustomBorderedField extends StatelessWidget {
           borderRadius: BorderRadius.circular(10),
           borderSide: const BorderSide(color: Colors.blueAccent, width: 2),
         ),
-        contentPadding: const EdgeInsets.symmetric(vertical: 14, horizontal: 10),
+        contentPadding:
+            const EdgeInsets.symmetric(vertical: 14, horizontal: 10),
       ),
     );
   }
