@@ -9,6 +9,8 @@ import 'pages/diet_page.dart';
 import 'pages/profile_page.dart';
 
 class BottomNavBar extends StatefulWidget {
+  const BottomNavBar({super.key});
+
   @override
   _CustomBottomNavBarState createState() => _CustomBottomNavBarState();
 }
@@ -49,13 +51,14 @@ class _CustomBottomNavBarState extends State<BottomNavBar> {
             iconSize: 24,
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
             duration: const Duration(milliseconds: 400),
-            tabBackgroundColor: Colors.red.withOpacity(0.2), // Background for the active tab
+            tabBackgroundColor:
+                Colors.red.withOpacity(0.2), // Background for the active tab
             color: Colors.black, // Inactive icon color
-            tabs: [
+            tabs: const [
               GButton(
                 icon: LineIcons.home,
                 text: 'Home',
-                textStyle: const TextStyle(
+                textStyle: TextStyle(
                   color: Colors.red,
                   fontWeight: FontWeight.bold,
                 ),
@@ -63,7 +66,7 @@ class _CustomBottomNavBarState extends State<BottomNavBar> {
               GButton(
                 icon: LineIcons.dumbbell,
                 text: 'Workout',
-                textStyle: const TextStyle(
+                textStyle: TextStyle(
                   color: Colors.red,
                   fontWeight: FontWeight.bold,
                 ),
@@ -71,7 +74,7 @@ class _CustomBottomNavBarState extends State<BottomNavBar> {
               GButton(
                 icon: LineIcons.utensils,
                 text: 'Diet',
-                textStyle: const TextStyle(
+                textStyle: TextStyle(
                   color: Colors.red,
                   fontWeight: FontWeight.bold,
                 ),
@@ -79,7 +82,7 @@ class _CustomBottomNavBarState extends State<BottomNavBar> {
               GButton(
                 icon: LineIcons.user,
                 text: 'Profile',
-                textStyle: const TextStyle(
+                textStyle: TextStyle(
                   color: Colors.red,
                   fontWeight: FontWeight.bold,
                 ),

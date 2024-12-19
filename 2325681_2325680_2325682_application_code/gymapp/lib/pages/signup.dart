@@ -1,112 +1,72 @@
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:gymapp/pages/login.dart';
+import 'package:cloud_firestore/cloud_firestore.dart'; // Import Firestore
+import '../bnav.dart'; // Import BottomNavBar
 
-import '../question.dart';
-
-// AuthMethod for handling signup process
-class AuthMethod {
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-
-  Future<String> signupUser({
-    required String email,
-    required String password,
-    required String name,
-  }) async {
-    String res = "Some error occurred";
-    try {
-      if (email.isNotEmpty && password.isNotEmpty && name.isNotEmpty) {
-        UserCredential cred = await _auth.createUserWithEmailAndPassword(
-          email: email,
-          password: password,
-        );
-        await _firestore.collection("users").doc(cred.user!.uid).set({
-          'displayName': name,
-          'uid': cred.user!.uid,
-          'email': email,
-        });
-        res = "success";
-      } else {
-        res = "Please fill out all fields";
-      }
-    } catch (err) {
-      res = err.toString();
-    }
-    return res;
-  }
-}
-
-// SignUpPage class
-class SignUpPage extends StatefulWidget {
-  const SignUpPage({Key? key}) : super(key: key);
-
-  @override
-  State<SignUpPage> createState() => _SignUpPageState();
-}
-
-class _SignUpPageState extends State<SignUpPage> {
+class SignUp extends StatelessWidget {
   final TextEditingController nameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-  final TextEditingController confirmPasswordController = TextEditingController();
+  final TextEditingController confirmPasswordController =
+      TextEditingController();
+  final TextEditingController weightController = TextEditingController();
+  final TextEditingController ageController = TextEditingController();
+  final TextEditingController heightcontroller = TextEditingController();
 
-  bool isLoading = false;
+  SignUp({super.key});
 
-  @override
-  void dispose() {
-    nameController.dispose();
-    emailController.dispose();
-    passwordController.dispose();
-    confirmPasswordController.dispose();
-    super.dispose();
-  }
+  void signUpUser(BuildContext context) async {
+    try {
+      if (passwordController.text != confirmPasswordController.text) {
+        throw Exception("Passwords do not match");
+      }
 
-  // signupUser function to handle the signup logic and navigate to the next page
-  void signupUser() async {
-    if (passwordController.text != confirmPasswordController.text) {
-      return;
-    }
-
-    setState(() {
-      isLoading = true;
-    });
-
-    String res = await AuthMethod().signupUser(
-      email: emailController.text,
-      password: passwordController.text,
-      name: nameController.text,
-    );
-
-    setState(() {
-      isLoading = false;
-    });
-
-    if (res == "success") {
-      // Navigate to another page on successful signup
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => AnotherPage()), // Replace with your destination page
+      // Create user with email and password
+      UserCredential userCredential =
+          await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: emailController.text.trim(),
+        password: passwordController.text.trim(),
       );
-    } else {
-      // Show error if signup failed
-      showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            title: Text("Signup Error"),
-            content: Text(res),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                child: Text("OK"),
-              ),
-            ],
-          );
-        },
+
+      // Access user details
+      User? user = userCredential.user;
+      if (user == null) {
+        throw Exception("Failed to retrieve user details");
+      }
+
+      // Log user information for debugging
+      print("User signed up: ${user.uid}, ${user.email}");
+
+      // Add additional user data (name, weight, and age) to Firestore
+      FirebaseFirestore.instance.collection('users').doc(user.uid).set({
+        'name': nameController.text.trim(),
+        'email': emailController.text.trim(),
+        'weight': weightController.text.trim(),
+        'age': ageController.text.trim(),
+        'height': heightcontroller.text.trim(),
+      }).then((_) {
+        // Show success message
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Signup successful")),
+        );
+
+        // Navigate to BottomNavBar after successful signup
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (context) => BottomNavBar()),
+          (route) => false, // Clears the navigation stack
+        );
+      }).catchError((error) {
+        // Handle Firestore errors
+        print("Error adding user data to Firestore: $error");
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Error: ${error.toString()}")),
+        );
+      });
+    } catch (e) {
+      print("Error during signup: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Error: ${e.toString()}")),
       );
     }
   }
@@ -114,6 +74,23 @@ class _SignUpPageState extends State<SignUpPage> {
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
+
+    InputDecoration textFieldDecoration(String hintText, IconData icon) {
+      return InputDecoration(
+        prefixIcon: Icon(icon, color: Colors.blueAccent),
+        hintText: hintText,
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: const BorderSide(color: Colors.grey, width: 1),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: const BorderSide(color: Colors.blueAccent, width: 2),
+        ),
+        contentPadding:
+            const EdgeInsets.symmetric(vertical: 14, horizontal: 10),
+      );
+    }
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -123,10 +100,16 @@ class _SignUpPageState extends State<SignUpPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              IconButton(
-                onPressed: () => Navigator.pop(context),
-                icon: const Icon(Icons.arrow_back, color: Colors.blueAccent),
+              Align(
+                alignment: Alignment.topLeft,
+                child: IconButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  icon: const Icon(Icons.arrow_back, color: Colors.blueAccent),
+                ),
               ),
+              const SizedBox(height: 10),
               const Center(
                 child: Text(
                   "Sign Up",
@@ -141,138 +124,92 @@ class _SignUpPageState extends State<SignUpPage> {
               const Center(
                 child: Text(
                   "Create your new account",
-                  style: TextStyle(fontSize: 14, color: Colors.grey),
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Colors.grey,
+                  ),
                 ),
               ),
               const SizedBox(height: 30),
-              CustomInputField(
+              TextField(
                 controller: nameController,
-                icon: Icons.person,
-                hintText: "Full Name",
+                decoration: textFieldDecoration("Full Name", Icons.person),
               ),
-              const SizedBox(height: 20),
-              CustomInputField(
+              const SizedBox(height: 25),
+              TextField(
                 controller: emailController,
-                icon: Icons.email,
-                hintText: "Email Address",
+                decoration: textFieldDecoration("Email Address", Icons.email),
               ),
-              const SizedBox(height: 20),
-              CustomInputField(
+              const SizedBox(height: 15),
+              TextField(
                 controller: passwordController,
-                icon: Icons.lock,
-                hintText: "Password",
                 obscureText: true,
+                decoration: textFieldDecoration("Password", Icons.lock),
+              ),
+              const SizedBox(height: 15),
+              TextField(
+                controller: confirmPasswordController,
+                obscureText: true,
+                decoration: textFieldDecoration("Confirm Password", Icons.lock),
+              ),
+              const SizedBox(height: 15),
+              TextField(
+                controller: weightController,
+                decoration: textFieldDecoration("Weight", Icons.fitness_center),
+              ),
+              const SizedBox(height: 15),
+              TextField(
+                controller: ageController,
+                decoration: textFieldDecoration("Age", Icons.calendar_today),
+              ),
+              const SizedBox(height: 15),
+              TextField(
+                controller: heightcontroller,
+                decoration: textFieldDecoration("Height", Icons.height),
               ),
               const SizedBox(height: 20),
-              CustomInputField(
-                controller: confirmPasswordController,
-                icon: Icons.lock,
-                hintText: "Confirm Password",
-                obscureText: true,
-              ),
-              const SizedBox(height: 30),
               Center(
                 child: SizedBox(
                   width: screenWidth * 0.9,
                   height: 50,
                   child: ElevatedButton(
-                    onPressed: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (context)=>QuestionPage()));
-                    },
+                    onPressed: () => signUpUser(context),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.blueAccent,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10),
                       ),
                     ),
-                    child: isLoading
-                        ? const CircularProgressIndicator(color: Colors.white)
-                        : const Text(
-                      "Sign Up",
+                    child: const Text(
+                      "Signup",
                       style: TextStyle(fontSize: 18, color: Colors.white),
                     ),
                   ),
                 ),
               ),
-              const SizedBox(height: 20),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Text("Already have an account? "),
-                  GestureDetector(
-                    onTap: () => Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) => LoginPage(),
-                      ),
-                    ),
-                    child: const Text(
-                      "Login",
-                      style: TextStyle(
-                        color: Colors.blueAccent,
-                        fontWeight: FontWeight.bold,
-                      ),
+              const SizedBox(height: 24),
+              Center(
+                child: GestureDetector(
+                  onTap: () {
+                    Navigator.pop(context);
+                  },
+                  child: const Text.rich(
+                    TextSpan(
+                      text: "Already have an account? ",
+                      style: TextStyle(color: Colors.black87, fontSize: 14),
+                      children: [
+                        TextSpan(
+                          text: "Login",
+                          style: TextStyle(
+                              color: Colors.blue, fontWeight: FontWeight.bold),
+                        ),
+                      ],
                     ),
                   ),
-                ],
+                ),
               ),
             ],
           ),
-        ),
-      ),
-    );
-  }
-}
-
-// CustomInputField widget for input fields
-class CustomInputField extends StatelessWidget {
-  final TextEditingController controller;
-  final IconData icon;
-  final String hintText;
-  final bool obscureText;
-
-  const CustomInputField({
-    Key? key,
-    required this.controller,
-    required this.icon,
-    required this.hintText,
-    this.obscureText = false,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return TextField(
-      controller: controller,
-      obscureText: obscureText,
-      decoration: InputDecoration(
-        prefixIcon: Icon(icon, color: Colors.blueAccent),
-        hintText: hintText,
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-          borderSide: const BorderSide(color: Colors.grey, width: 1),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-          borderSide: const BorderSide(color: Colors.blueAccent, width: 2),
-        ),
-        contentPadding: const EdgeInsets.symmetric(vertical: 14, horizontal: 10),
-      ),
-    );
-  }
-}
-
-// AnotherPage widget to navigate to after successful signup
-class AnotherPage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Welcome'),
-        backgroundColor: Colors.blueAccent,
-      ),
-      body: Center(
-        child: Text(
-          'You have successfully signed up!',
-          style: TextStyle(fontSize: 24),
         ),
       ),
     );

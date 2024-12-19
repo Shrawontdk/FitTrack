@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'bnav.dart';
 
 class QuestionPage extends StatefulWidget {
-  const QuestionPage({Key? key}) : super(key: key);
+  const QuestionPage({super.key});
 
   @override
   State<QuestionPage> createState() => _QuestionPageState();
@@ -25,13 +25,7 @@ class _QuestionPageState extends State<QuestionPage> {
     },
     {
       'question': 'How often do you track your progress?',
-      'options': [
-        'Daily',
-        'Weekly',
-        'Monthly',
-        'Rarely',
-        'Never'
-      ]
+      'options': ['Daily', 'Weekly', 'Monthly', 'Rarely', 'Never']
     },
     {
       'question': 'What motivates you to work out?',
@@ -54,7 +48,8 @@ class _QuestionPageState extends State<QuestionPage> {
       ]
     },
     {
-      'question': 'What is your biggest obstacle in maintaining a consistent workout routine?',
+      'question':
+          'What is your biggest obstacle in maintaining a consistent workout routine?',
       'options': [
         'Lack of time',
         'Lack of motivation',
@@ -84,7 +79,8 @@ class _QuestionPageState extends State<QuestionPage> {
   }
 
   void _showResults() {
-    Navigator.push(context,MaterialPageRoute(builder: (context)=>BottomNavBar()));
+    Navigator.push(
+        context, MaterialPageRoute(builder: (context) => BottomNavBar()));
     // showDialog(
     //   context: context,
     //   builder: (context) => AlertDialog(
@@ -185,11 +181,14 @@ class _QuestionPageState extends State<QuestionPage> {
                   },
                   child: Container(
                     margin: const EdgeInsets.symmetric(vertical: 8.0),
-                    padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 20.0),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 12.0, vertical: 20.0),
                     decoration: BoxDecoration(
                       color: Colors.black,
                       border: Border.all(
-                        color: selectedAnswer == option ? Colors.red : Colors.grey.shade800,
+                        color: selectedAnswer == option
+                            ? Colors.red
+                            : Colors.grey.shade800,
                         width: 1.5,
                       ),
                       borderRadius: BorderRadius.circular(8.0),
@@ -200,13 +199,17 @@ class _QuestionPageState extends State<QuestionPage> {
                           selectedAnswer == option
                               ? Icons.radio_button_checked
                               : Icons.radio_button_unchecked,
-                          color: selectedAnswer == option ? Colors.red : Colors.grey,
+                          color: selectedAnswer == option
+                              ? Colors.red
+                              : Colors.grey,
                         ),
                         const SizedBox(width: 12),
                         Text(
                           option,
                           style: TextStyle(
-                            color: selectedAnswer == option ? Colors.red : Colors.white,
+                            color: selectedAnswer == option
+                                ? Colors.red
+                                : Colors.white,
                             fontSize: 16.0,
                           ),
                         ),
@@ -220,8 +223,9 @@ class _QuestionPageState extends State<QuestionPage> {
                 child: ElevatedButton(
                   onPressed: _nextQuestion,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor:
-                    selectedAnswer != null ? Colors.red : Colors.red.shade900,
+                    backgroundColor: selectedAnswer != null
+                        ? Colors.red
+                        : Colors.red.shade900,
                     minimumSize: const Size(double.infinity, 50),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8.0),

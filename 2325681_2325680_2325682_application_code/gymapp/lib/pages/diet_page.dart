@@ -7,6 +7,8 @@ import 'package:table_calendar/table_calendar.dart';
 import 'package:gymapp/pages/bmi.dart';
 
 class DietPage extends StatefulWidget {
+  const DietPage({super.key});
+
   @override
   _DietPlanPageState createState() => _DietPlanPageState();
 }
@@ -21,7 +23,7 @@ class _DietPlanPageState extends State<DietPage> {
   DateTime _selectedDay = DateTime.now();
 
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-  FlutterLocalNotificationsPlugin();
+      FlutterLocalNotificationsPlugin();
 
   @override
   void initState() {
@@ -41,14 +43,14 @@ class _DietPlanPageState extends State<DietPage> {
 
     await flutterLocalNotificationsPlugin
         .resolvePlatformSpecificImplementation<
-        AndroidFlutterLocalNotificationsPlugin>()
+            AndroidFlutterLocalNotificationsPlugin>()
         ?.createNotificationChannel(channel);
 
     const AndroidInitializationSettings initializationSettingsAndroid =
-    AndroidInitializationSettings('@mipmap/ic_launcher');
+        AndroidInitializationSettings('@mipmap/ic_launcher');
 
     const InitializationSettings initializationSettings =
-    InitializationSettings(android: initializationSettingsAndroid);
+        InitializationSettings(android: initializationSettingsAndroid);
 
     await flutterLocalNotificationsPlugin.initialize(initializationSettings);
   }
@@ -64,7 +66,8 @@ class _DietPlanPageState extends State<DietPage> {
         scheduledDate = scheduledDate.add(const Duration(days: 1));
       }
 
-      const AndroidNotificationDetails androidDetails = AndroidNotificationDetails(
+      const AndroidNotificationDetails androidDetails =
+          AndroidNotificationDetails(
         'meal_reminder_channel',
         'Meal Reminders',
         channelDescription: 'Reminders for your meals',
@@ -73,7 +76,7 @@ class _DietPlanPageState extends State<DietPage> {
       );
 
       const NotificationDetails notificationDetails =
-      NotificationDetails(android: androidDetails);
+          NotificationDetails(android: androidDetails);
 
       await flutterLocalNotificationsPlugin.zonedSchedule(
         1,
@@ -83,7 +86,7 @@ class _DietPlanPageState extends State<DietPage> {
         notificationDetails,
         androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
         uiLocalNotificationDateInterpretation:
-        UILocalNotificationDateInterpretation.absoluteTime,
+            UILocalNotificationDateInterpretation.absoluteTime,
       );
 
       if (mounted) {
@@ -108,7 +111,8 @@ class _DietPlanPageState extends State<DietPage> {
   }
 
   Future<void> _showNotification() async {
-    const AndroidNotificationDetails androidDetails = AndroidNotificationDetails(
+    const AndroidNotificationDetails androidDetails =
+        AndroidNotificationDetails(
       'meal_reminder_channel',
       'Meal Reminders',
       channelDescription: 'Reminders for your meals',
@@ -117,7 +121,7 @@ class _DietPlanPageState extends State<DietPage> {
     );
 
     const NotificationDetails notificationDetails =
-    NotificationDetails(android: androidDetails);
+        NotificationDetails(android: androidDetails);
 
     await flutterLocalNotificationsPlugin.show(
       0,
@@ -198,7 +202,7 @@ class _DietPlanPageState extends State<DietPage> {
             fontWeight: FontWeight.bold,
           ),
         ),
-        iconTheme: IconThemeData(color: Colors.black87),
+        iconTheme: const IconThemeData(color: Colors.black87),
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -208,7 +212,7 @@ class _DietPlanPageState extends State<DietPage> {
             children: [
               // Reminder Card
               Container(
-                padding: EdgeInsets.all(16),
+                padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(12),
@@ -216,7 +220,7 @@ class _DietPlanPageState extends State<DietPage> {
                     BoxShadow(
                       color: Colors.grey.shade300,
                       blurRadius: 6,
-                      offset: Offset(0, 4),
+                      offset: const Offset(0, 4),
                     ),
                   ],
                 ),
@@ -231,7 +235,7 @@ class _DietPlanPageState extends State<DietPage> {
                           height: 40,
                           fit: BoxFit.cover,
                         ),
-                        SizedBox(width: 12),
+                        const SizedBox(width: 12),
                         const Text(
                           'Set Reminder',
                           style: TextStyle(
@@ -240,7 +244,7 @@ class _DietPlanPageState extends State<DietPage> {
                             color: Colors.black87,
                           ),
                         ),
-                        Spacer(),
+                        const Spacer(),
                         Switch(
                           value: _isReminderOn,
                           onChanged: (val) async {
@@ -275,16 +279,17 @@ class _DietPlanPageState extends State<DietPage> {
                     if (_reminderTime != null)
                       Text(
                         'Reminder set for: ${_reminderTime!.toLocal()}',
-                        style: TextStyle(fontSize: 12, color: Colors.teal),
+                        style:
+                            const TextStyle(fontSize: 12, color: Colors.teal),
                       ),
                   ],
                 ),
               ),
-              SizedBox(height: 16),
+              const SizedBox(height: 16),
 
               // Calendar
               Container(
-                padding: EdgeInsets.all(8),
+                padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(12),
@@ -292,7 +297,7 @@ class _DietPlanPageState extends State<DietPage> {
                     BoxShadow(
                       color: Colors.grey.shade300,
                       blurRadius: 6,
-                      offset: Offset(0, 4),
+                      offset: const Offset(0, 4),
                     ),
                   ],
                 ),
@@ -312,20 +317,20 @@ class _DietPlanPageState extends State<DietPage> {
                       color: Colors.teal.shade100,
                       shape: BoxShape.circle,
                     ),
-                    selectedDecoration: BoxDecoration(
+                    selectedDecoration: const BoxDecoration(
                       color: Colors.teal,
                       shape: BoxShape.circle,
                     ),
-                    defaultTextStyle: TextStyle(color: Colors.black87),
-                    weekendTextStyle: TextStyle(color: Colors.black87),
+                    defaultTextStyle: const TextStyle(color: Colors.black87),
+                    weekendTextStyle: const TextStyle(color: Colors.black87),
                   ),
-                  headerStyle: HeaderStyle(
+                  headerStyle: const HeaderStyle(
                     formatButtonVisible: false,
                     titleCentered: true,
                   ),
                 ),
               ),
-              SizedBox(height: 16),
+              const SizedBox(height: 16),
 
               // Today's Meal Section
               Row(
@@ -341,7 +346,8 @@ class _DietPlanPageState extends State<DietPage> {
                   ),
                   TextButton(
                     onPressed: () {},
-                    child: Text('Edit Diet', style: TextStyle(color: Colors.teal)),
+                    child: const Text('Edit Diet',
+                        style: TextStyle(color: Colors.teal)),
                   ),
                 ],
               ),
@@ -367,8 +373,8 @@ class _DietPlanPageState extends State<DietPage> {
           );
         },
         backgroundColor: Colors.teal,
-        icon: Icon(Icons.edit, color: Colors.white),
-        label: Text(
+        icon: const Icon(Icons.edit, color: Colors.white),
+        label: const Text(
           'Enter BMI',
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
@@ -379,8 +385,8 @@ class _DietPlanPageState extends State<DietPage> {
   Widget mealCard(String title, String time, String calories, String details,
       String image) {
     return Container(
-      margin: EdgeInsets.only(bottom: 16),
-      padding: EdgeInsets.all(12),
+      margin: const EdgeInsets.only(bottom: 16),
+      padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
@@ -388,7 +394,7 @@ class _DietPlanPageState extends State<DietPage> {
           BoxShadow(
             color: Colors.grey.shade300,
             blurRadius: 6,
-            offset: Offset(0, 4),
+            offset: const Offset(0, 4),
           ),
         ],
       ),
@@ -396,14 +402,14 @@ class _DietPlanPageState extends State<DietPage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Image.network(image, width: 60, height: 60, fit: BoxFit.cover),
-          SizedBox(width: 12),
+          const SizedBox(width: 12),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   title,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
                     color: Colors.black87,
@@ -422,7 +428,7 @@ class _DietPlanPageState extends State<DietPage> {
           ),
           Text(
             calories,
-            style: TextStyle(
+            style: const TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.bold,
               color: Colors.teal,

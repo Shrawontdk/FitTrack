@@ -11,7 +11,7 @@ class NotificationService {
             'logo'); // Replace 'logo' with your app's drawable resource name
 
     final InitializationSettings initializationSettings =
-        InitializationSettings(
+        const InitializationSettings(
       android: initializationAndroidSettings,
     );
 

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 class BMIPage extends StatefulWidget {
+  const BMIPage({super.key});
+
   @override
   _BMIPageState createState() => _BMIPageState();
 }
@@ -34,7 +36,7 @@ class _BMIPageState extends State<BMIPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('BMI Calculator'),
+        title: const Text('BMI Calculator'),
         centerTitle: true,
         backgroundColor: Colors.teal,
       ),
@@ -44,54 +46,56 @@ class _BMIPageState extends State<BMIPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
 
               // Weight Input
               TextField(
                 controller: _weightController,
                 keyboardType: TextInputType.number,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   labelText: 'Enter Weight (kg)',
                   border: OutlineInputBorder(),
                 ),
               ),
-              SizedBox(height: 16),
+              const SizedBox(height: 16),
 
               // Height Input
               TextField(
                 controller: _heightController,
                 keyboardType: TextInputType.number,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   labelText: 'Enter Height (m)',
                   border: OutlineInputBorder(),
                 ),
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
 
               // Calculate Button
               Center(
                 child: ElevatedButton(
                   onPressed: _calculateBMI,
                   style: ElevatedButton.styleFrom(
-                    padding: EdgeInsets.symmetric(vertical: 14, horizontal: 40),
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 14, horizontal: 40),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
                     ),
                   ),
-                  child: Text(
+                  child: const Text(
                     'Calculate BMI',
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
                 ),
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
 
               // BMI Result
               if (_bmiResult.isNotEmpty)
                 Center(
                   child: Text(
                     _bmiResult,
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    style: const TextStyle(
+                        fontSize: 20, fontWeight: FontWeight.bold),
                   ),
                 ),
             ],
