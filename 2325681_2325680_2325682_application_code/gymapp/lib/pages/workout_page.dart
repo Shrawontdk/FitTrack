@@ -2,36 +2,37 @@ import 'package:flutter/material.dart';
 import '../data/excercise.dart';
 
 class WorkoutPage extends StatelessWidget {
+  const WorkoutPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           "Workout Plans",
           style: TextStyle(fontWeight: FontWeight.bold),
-
         ),
         centerTitle: true,
         backgroundColor: Colors.white,
         elevation: 0,
-        titleTextStyle: TextStyle(color: Colors.black, fontSize: 20),
-        iconTheme: IconThemeData(color: Colors.black),
+        titleTextStyle: const TextStyle(color: Colors.black, fontSize: 20),
+        iconTheme: const IconThemeData(color: Colors.black),
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SizedBox(height: 16),
+          const SizedBox(height: 16),
 
           // "Exercises" Text
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16.0),
             child: Text(
               "Exercises:",
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
           ),
 
-          SizedBox(height: 8),
+          const SizedBox(height: 8),
 
           // Display exercises
           Expanded(
@@ -61,6 +62,7 @@ class ExerciseCard extends StatelessWidget {
   final String burns;
 
   const ExerciseCard({
+    super.key,
     required this.name,
     required this.category,
     required this.imageUrl,
@@ -70,7 +72,7 @@ class ExerciseCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       elevation: 2,
       child: Padding(
@@ -89,7 +91,7 @@ class ExerciseCard extends StatelessWidget {
                 ),
               ),
             ),
-            SizedBox(width: 16),
+            const SizedBox(width: 16),
             // Exercise Details
             Expanded(
               child: Column(
@@ -97,12 +99,13 @@ class ExerciseCard extends StatelessWidget {
                 children: [
                   Text(
                     name,
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                    style: const TextStyle(
+                        fontWeight: FontWeight.bold, fontSize: 16),
                   ),
-                  SizedBox(height: 4),
+                  const SizedBox(height: 4),
                   Text(
                     category,
-                    style: TextStyle(color: Colors.grey),
+                    style: const TextStyle(color: Colors.grey),
                   ),
                 ],
               ),
@@ -112,12 +115,12 @@ class ExerciseCard extends StatelessWidget {
               children: [
                 Text(
                   burns,
-                  style: TextStyle(
+                  style: const TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 18,
                       color: Colors.teal),
                 ),
-                Text(
+                const Text(
                   "Burned",
                   style: TextStyle(fontSize: 12, color: Colors.grey),
                 ),

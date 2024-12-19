@@ -4,6 +4,8 @@ import 'package:cloud_firestore/cloud_firestore.dart'; // Firestore dependency
 import 'package:gymapp/pages/login.dart'; // Import the LoginPage
 
 class ProfilePage extends StatefulWidget {
+  const ProfilePage({super.key});
+
   @override
   _ProfilePageState createState() => _ProfilePageState();
 }
@@ -55,14 +57,14 @@ class _ProfilePageState extends State<ProfilePage> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Confirm Logout'),
-          content: Text('Are you sure you want to logout?'),
+          title: const Text('Confirm Logout'),
+          content: const Text('Are you sure you want to logout?'),
           actions: <Widget>[
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop(); // Close the dialog
               },
-              child: Text('No'),
+              child: const Text('No'),
             ),
             TextButton(
               onPressed: () {
@@ -74,7 +76,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       builder: (context) => LoginPage()), // Redirect to login
                 );
               },
-              child: Text('Yes'),
+              child: const Text('Yes'),
             ),
           ],
         );
@@ -87,7 +89,7 @@ class _ProfilePageState extends State<ProfilePage> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           'Profile Page',
           style: TextStyle(
               color: Colors.black, fontWeight: FontWeight.bold, fontSize: 20),
@@ -95,35 +97,35 @@ class _ProfilePageState extends State<ProfilePage> {
         centerTitle: true,
         backgroundColor: Colors.white,
         elevation: 0,
-        iconTheme: IconThemeData(color: Colors.black),
+        iconTheme: const IconThemeData(color: Colors.black),
       ),
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
 
             // Profile Image and Details
-            CircleAvatar(
+            const CircleAvatar(
               radius: 50,
               backgroundImage: NetworkImage(
                   'https://cdn-icons-png.flaticon.com/512/147/147142.png'), // Default Image
             ),
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
             Text(
               name, // Display user's name
-              style: TextStyle(
+              style: const TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
                   color: Colors.black),
             ),
-            SizedBox(height: 4),
+            const SizedBox(height: 4),
             Text(
               email, // Display user's email
               style: TextStyle(fontSize: 14, color: Colors.grey.shade700),
             ),
 
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
 
             // Weight, Height, Age Section
             Row(
@@ -141,8 +143,8 @@ class _ProfilePageState extends State<ProfilePage> {
 
             // Mute Notification
             ListTile(
-              leading: Icon(Icons.notifications, color: Colors.black),
-              title: Text(
+              leading: const Icon(Icons.notifications, color: Colors.black),
+              title: const Text(
                 "Mute Notification",
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
               ),
@@ -169,7 +171,7 @@ class _ProfilePageState extends State<ProfilePage> {
             // Terms & Conditions
             buildListTile(Icons.article_outlined, "Term & Condition", () {}),
 
-            SizedBox(height: 24),
+            const SizedBox(height: 24),
 
             // Logout Button
             Padding(
@@ -182,12 +184,12 @@ class _ProfilePageState extends State<ProfilePage> {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.red.shade100,
                   elevation: 0,
-                  padding: EdgeInsets.symmetric(vertical: 14),
+                  padding: const EdgeInsets.symmetric(vertical: 14),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8),
                   ),
                 ),
-                child: Center(
+                child: const Center(
                   child: Text(
                     "Logout",
                     style: TextStyle(
@@ -198,7 +200,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),
               ),
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
           ],
         ),
       ),
@@ -211,10 +213,10 @@ class _ProfilePageState extends State<ProfilePage> {
       children: [
         Text(
           value,
-          style: TextStyle(
+          style: const TextStyle(
               fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black),
         ),
-        SizedBox(height: 4),
+        const SizedBox(height: 4),
         Text(
           title,
           style: TextStyle(fontSize: 14, color: Colors.grey.shade600),
@@ -229,9 +231,10 @@ class _ProfilePageState extends State<ProfilePage> {
       leading: Icon(icon, color: Colors.black),
       title: Text(
         title,
-        style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
       ),
-      trailing: Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
+      trailing:
+          const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
       onTap: onTap,
     );
   }

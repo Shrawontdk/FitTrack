@@ -13,6 +13,8 @@ class SignUp extends StatelessWidget {
   final TextEditingController ageController = TextEditingController();
   final TextEditingController heightcontroller = TextEditingController();
 
+  SignUp({super.key});
+
   void signUpUser(BuildContext context) async {
     try {
       if (passwordController.text != confirmPasswordController.text) {
@@ -79,13 +81,14 @@ class SignUp extends StatelessWidget {
         hintText: hintText,
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
-          borderSide: BorderSide(color: Colors.grey, width: 1),
+          borderSide: const BorderSide(color: Colors.grey, width: 1),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
-          borderSide: BorderSide(color: Colors.blueAccent, width: 2),
+          borderSide: const BorderSide(color: Colors.blueAccent, width: 2),
         ),
-        contentPadding: EdgeInsets.symmetric(vertical: 14, horizontal: 10),
+        contentPadding:
+            const EdgeInsets.symmetric(vertical: 14, horizontal: 10),
       );
     }
 
@@ -103,11 +106,11 @@ class SignUp extends StatelessWidget {
                   onPressed: () {
                     Navigator.pop(context);
                   },
-                  icon: Icon(Icons.arrow_back, color: Colors.blueAccent),
+                  icon: const Icon(Icons.arrow_back, color: Colors.blueAccent),
                 ),
               ),
-              SizedBox(height: 10),
-              Center(
+              const SizedBox(height: 10),
+              const Center(
                 child: Text(
                   "Sign Up",
                   style: TextStyle(
@@ -117,8 +120,8 @@ class SignUp extends StatelessWidget {
                   ),
                 ),
               ),
-              SizedBox(height: 8),
-              Center(
+              const SizedBox(height: 8),
+              const Center(
                 child: Text(
                   "Create your new account",
                   style: TextStyle(
@@ -127,44 +130,44 @@ class SignUp extends StatelessWidget {
                   ),
                 ),
               ),
-              SizedBox(height: 30),
+              const SizedBox(height: 30),
               TextField(
                 controller: nameController,
                 decoration: textFieldDecoration("Full Name", Icons.person),
               ),
-              SizedBox(height: 25),
+              const SizedBox(height: 25),
               TextField(
                 controller: emailController,
                 decoration: textFieldDecoration("Email Address", Icons.email),
               ),
-              SizedBox(height: 15),
+              const SizedBox(height: 15),
               TextField(
                 controller: passwordController,
                 obscureText: true,
                 decoration: textFieldDecoration("Password", Icons.lock),
               ),
-              SizedBox(height: 15),
+              const SizedBox(height: 15),
               TextField(
                 controller: confirmPasswordController,
                 obscureText: true,
                 decoration: textFieldDecoration("Confirm Password", Icons.lock),
               ),
-              SizedBox(height: 15),
+              const SizedBox(height: 15),
               TextField(
                 controller: weightController,
                 decoration: textFieldDecoration("Weight", Icons.fitness_center),
               ),
-              SizedBox(height: 15),
+              const SizedBox(height: 15),
               TextField(
                 controller: ageController,
                 decoration: textFieldDecoration("Age", Icons.calendar_today),
               ),
-              SizedBox(height: 15),
+              const SizedBox(height: 15),
               TextField(
                 controller: heightcontroller,
                 decoration: textFieldDecoration("Height", Icons.height),
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               Center(
                 child: SizedBox(
                   width: screenWidth * 0.9,
@@ -177,20 +180,20 @@ class SignUp extends StatelessWidget {
                         borderRadius: BorderRadius.circular(10),
                       ),
                     ),
-                    child: Text(
+                    child: const Text(
                       "Signup",
                       style: TextStyle(fontSize: 18, color: Colors.white),
                     ),
                   ),
                 ),
               ),
-              SizedBox(height: 24),
+              const SizedBox(height: 24),
               Center(
                 child: GestureDetector(
                   onTap: () {
                     Navigator.pop(context);
                   },
-                  child: Text.rich(
+                  child: const Text.rich(
                     TextSpan(
                       text: "Already have an account? ",
                       style: TextStyle(color: Colors.black87, fontSize: 14),

@@ -5,6 +5,8 @@ import 'package:gymapp/pages/signup.dart'; // Ensure SignUpPage is correctly imp
 import '../bnav.dart'; // Ensure BottomNavBar is correctly imported
 
 class LoginPage extends StatefulWidget {
+  const LoginPage({super.key});
+
   @override
   State<LoginPage> createState() => _LoginPageState();
 }
@@ -69,7 +71,7 @@ class _LoginPageState extends State<LoginPage> {
               ),
             ),
 
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
 
             // Login Section
             Padding(
@@ -97,13 +99,13 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ),
 
-                  SizedBox(height: 24),
+                  const SizedBox(height: 24),
 
                   // Email TextField
                   TextField(
                     controller: email,
                     decoration: InputDecoration(
-                      prefixIcon: Icon(Icons.email, color: Colors.teal),
+                      prefixIcon: const Icon(Icons.email, color: Colors.teal),
                       hintText: 'Email Address',
                       filled: true,
                       fillColor: Colors.teal.shade50,
@@ -114,14 +116,14 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ),
 
-                  SizedBox(height: 16),
+                  const SizedBox(height: 16),
 
                   // Password TextField
                   TextField(
                     controller: password,
                     obscureText: !isPasswordVisible,
                     decoration: InputDecoration(
-                      prefixIcon: Icon(Icons.lock, color: Colors.teal),
+                      prefixIcon: const Icon(Icons.lock, color: Colors.teal),
                       suffixIcon: IconButton(
                         icon: Icon(isPasswordVisible
                             ? Icons.visibility
@@ -170,7 +172,7 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ),
 
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
 
                   // Or Connect Section
                   const Row(
@@ -195,7 +197,7 @@ class _LoginPageState extends State<LoginPage> {
                     ],
                   ),
 
-                  SizedBox(height: 16),
+                  const SizedBox(height: 16),
 
                   // Google Button (optional)
                   SizedBox(
@@ -229,7 +231,7 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ),
 
-                  SizedBox(height: 24),
+                  const SizedBox(height: 24),
 
                   // Sign Up Section
                   Center(
@@ -240,7 +242,7 @@ class _LoginPageState extends State<LoginPage> {
                           'Don\'t have an account?',
                           style: TextStyle(color: Colors.grey),
                         ),
-                        SizedBox(width: 4),
+                        const SizedBox(width: 4),
                         GestureDetector(
                           onTap: () {
                             Navigator.push(
