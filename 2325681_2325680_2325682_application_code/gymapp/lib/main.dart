@@ -1,12 +1,13 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:gymapp/notifications/notifications.dart';
 import 'package:gymapp/pages/login.dart';
 
-
-void main() async{
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
+  final NotificationService notificationService = NotificationService();
+  await notificationService.initNotification();
   await Firebase.initializeApp();
   runApp(MyApp());
 }

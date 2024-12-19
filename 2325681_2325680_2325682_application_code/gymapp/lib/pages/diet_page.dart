@@ -1,11 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:gymapp/pages/bmi.dart';
-import 'package:table_calendar/table_calendar.dart';
-import 'package:timezone/timezone.dart' as tz;
-import 'package:timezone/data/latest.dart' as tz;
-
 
 class DietPage extends StatefulWidget {
   @override
@@ -16,14 +10,10 @@ class _DietPlanPageState extends State<DietPage> {
   final String imageUrl =
       'https://th.bing.com/th/id/OIP.dca5B7rvK8VCV_eboQecKAHaHa?rs=1&pid=ImgDetMain';
 
-  DateTime _focusedDay = DateTime.now();
-  DateTime _selectedDay = DateTime.now();
-  DateTime? _reminderTime;
-
   bool _isReminderOn = false;
 
   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-  FlutterLocalNotificationsPlugin();
+      FlutterLocalNotificationsPlugin();
 
   @override
   void initState() {
@@ -32,15 +22,14 @@ class _DietPlanPageState extends State<DietPage> {
   }
 
   void _initializeNotifications() {
-    const androidInitializationSettings = AndroidInitializationSettings('@mipmap/ic_launcher');
+    const androidInitializationSettings =
+        AndroidInitializationSettings('@mipmap/ic_launcher');
     const initializationSettings =
-    InitializationSettings(android: androidInitializationSettings);
+        InitializationSettings(android: androidInitializationSettings);
     flutterLocalNotificationsPlugin.initialize(initializationSettings);
-
-    tz.initializeTimeZones();
   }
 
-  Future<void> _scheduleNotification(DateTime scheduledTime) async {
+  Future<void> _showNotification() async {
     const androidDetails = AndroidNotificationDetails(
       'reminder_channel_id',
       'Reminder Notifications',
@@ -50,42 +39,11 @@ class _DietPlanPageState extends State<DietPage> {
 
     const notificationDetails = NotificationDetails(android: androidDetails);
 
-    final tz.TZDateTime tzScheduledTime = tz.TZDateTime.from(scheduledTime, tz.local);
-
-    await flutterLocalNotificationsPlugin.zonedSchedule(
+    await flutterLocalNotificationsPlugin.show(
       0, // Notification ID
-      'Meal Reminder',
-      'It\'s time for your scheduled meal!',
-      tzScheduledTime,
+      'Reminder Set', // Notification Title
+      'Your diet reminder is now active!', // Notification Body
       notificationDetails,
-      androidAllowWhileIdle: true,
-      matchDateTimeComponents: DateTimeComponents.time,
-      uiLocalNotificationDateInterpretation:
-      UILocalNotificationDateInterpretation.absoluteTime,
-    );
-  }
-
-  void _showDateTimePicker() {
-    DatePicker.showDateTimePicker(
-      context,
-      showTitleActions: true,
-      onChanged: (dateTime) {
-        print('Selected Date-Time: $dateTime');
-      },
-      onConfirm: (dateTime) {
-        setState(() {
-          _reminderTime = dateTime;
-        });
-
-        if (_isReminderOn && _reminderTime != null) {
-          _scheduleNotification(_reminderTime!);
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Reminder set for $_reminderTime')),
-          );
-        }
-      },
-      currentTime: DateTime.now(),
-      locale: LocaleType.en,
     );
   }
 
@@ -144,32 +102,22 @@ class _DietPlanPageState extends State<DietPage> {
                           onChanged: (val) {
                             setState(() {
                               _isReminderOn = val;
+                              if (val) {
+                                _showNotification();
+                              }
                             });
-
-                            if (_isReminderOn) {
-                              _showDateTimePicker();
-                            }
                           },
                         ),
                       ],
                     ),
                     const SizedBox(height: 8),
                     const Text(
-                      'Turn on the reminder to get notification when its time to eat.',
+                      'Turn on the reminder to get a notification when it\'s time to eat.',
                       style: TextStyle(fontSize: 12, color: Colors.grey),
                     ),
-                    if (_reminderTime != null)
-                      Text(
-                        'Reminder set for: ${_reminderTime!.toLocal()}',
-                        style: TextStyle(fontSize: 12, color: Colors.teal),
-                      ),
                   ],
                 ),
               ),
-              SizedBox(height: 16),
-
-              // Calendar and Meals...
-              // Keep the rest of your original code here
             ],
           ),
         ),
