@@ -13,28 +13,24 @@ class _HomePageState extends State<HomePage> {
     // 'assets/images/chest_workout.png',
     "https://i.pinimg.com/236x/28/87/8d/28878d2dbe8caa961e44e82978a7a01e.jpg"
   ];
-  final String dietUrl =
-      'https://i.pinimg.com/736x/c1/a3/5f/c1a35f61a8bbbc989625433174446223.jpg';
-
-
 
   List<Map<String, dynamic>> getTodayExercises() {
     String today = DateTime.now().weekday == 1
         ? "Monday"
         : DateTime.now().weekday == 2
-        ? "Tuesday"
-        : DateTime.now().weekday == 3
-        ? "Wednesday"
-        : DateTime.now().weekday == 4
-        ? "Thursday"
-        : DateTime.now().weekday == 5
-        ? "Friday"
-        : DateTime.now().weekday == 6
-        ? "Saturday"
-        : "Sunday";
+            ? "Tuesday"
+            : DateTime.now().weekday == 3
+                ? "Wednesday"
+                : DateTime.now().weekday == 4
+                    ? "Thursday"
+                    : DateTime.now().weekday == 5
+                        ? "Friday"
+                        : DateTime.now().weekday == 6
+                            ? "Saturday"
+                            : "Sunday";
 
     return sevenexercises
-        .firstWhere((element) => element['day'] == today)['exercises'] ??
+            .firstWhere((element) => element['day'] == today)['exercises'] ??
         [];
   }
 
@@ -45,14 +41,10 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       backgroundColor: Colors.grey.shade100,
       appBar: AppBar(
-
         backgroundColor: Colors.teal,
         elevation: 0,
         title: Text("HomePage"),
-
         centerTitle: true,
-
-
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -104,20 +96,16 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
 
-
             // Progress Status Section
 
             // Daily Diet Section
             sectionHeader("Daily Diet", "See More"),
-            dietCard(
-                dietUrl, "Breakfast", "Calories: 650 kcal", "Protein: 25g",
-                "Fats: 28g, Carbs: 75-100g"),
-            dietCard(
-                dietUrl, "Lunch", "Calories: 800 kcal", "Protein: 30g",
-                "Fats: 35g, Carbs: 85-110g"),
-            dietCard(
-                dietUrl, "Dinner", "Calories: 700 kcal", "Protein: 28g",
-                "Fats: 25g, Carbs: 70-95g"),
+            dietCard(imageUrls[0], "Breakfast", "Calories: 650 kcal",
+                "Protein: 25g", "Fats: 28g, Carbs: 75-100g"),
+            dietCard(imageUrls[0], "Lunch", "Calories: 800 kcal",
+                "Protein: 30g", "Fats: 35g, Carbs: 85-110g"),
+            dietCard(imageUrls[0], "Dinner", "Calories: 700 kcal",
+                "Protein: 28g", "Fats: 25g, Carbs: 70-95g"),
           ],
         ),
       ),
