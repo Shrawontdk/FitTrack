@@ -1,5 +1,8 @@
 // question_page.dart
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:gymapp/pages/home_page.dart';
 
 import 'bnav.dart';
 
@@ -78,29 +81,35 @@ class _QuestionPageState extends State<QuestionPage> {
     }
   }
 
-  void _showResults() {
-    Navigator.push(
-        context, MaterialPageRoute(builder: (context) => BottomNavBar()));
-    // showDialog(
-    //   context: context,
-    //   builder: (context) => AlertDialog(
-    //     title: const Text('Your Answers'),
-    //     content: Column(
-    //       mainAxisSize: MainAxisSize.min,
-    //       children: userAnswers.entries.map((entry) {
-    //         return Text('Q${entry.key + 1}: ${entry.value}');
-    //       }).toList(),
-    //     ),
-    //     actions: [
-    //       TextButton(
-    //         onPressed: () {
-    //           Navigator.of(context).pop();
-    //         },
-    //         child: const Text('Close'),
-    //       ),
-    //     ],
-    //   ),
-    // );
+  void _showResults() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      try {
+        // Convert answers to string-keyed map for Firestore
+        final Map<String, String> convertedAnswers = userAnswers.map(
+          (key, value) => MapEntry(key.toString(), value),
+        );
+
+        // Save answers to Firestore
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(user.uid)
+            .update({'fitnessAnswers': convertedAnswers});
+
+        // Navigate to BottomNavBar
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => HomePage(),
+          ),
+        );
+      } catch (error) {
+        print("Error saving answers: $error");
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Error saving answers: $error")),
+        );
+      }
+    }
   }
 
   @override

@@ -61,7 +61,8 @@ class _ProfilePageState extends State<ProfilePage> {
   // Save theme mode to SharedPreferences
   Future<void> _saveThemeMode(ThemeMode themeMode) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString('themeMode', themeMode == ThemeMode.dark ? 'dark' : 'light');
+    await prefs.setString(
+        'themeMode', themeMode == ThemeMode.dark ? 'dark' : 'light');
   }
 
   @override
@@ -79,22 +80,20 @@ class _ProfilePageState extends State<ProfilePage> {
       darkTheme: ThemeData.dark(),
       themeMode: _themeMode,
       home: Scaffold(
-        backgroundColor: Theme.of(context).scaffoldBackgroundColor, // Ensure background color follows theme
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         appBar: AppBar(
           title: const Text('Profile Page'),
           centerTitle: true,
           backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
-          iconTheme: Theme.of(context).iconTheme, // Ensure icons use the correct theme
+          iconTheme: Theme.of(context).iconTheme,
         ),
-        body: Theme(  // Explicitly wrap the body with the correct theme
-          data: Theme.of(context), // Use current theme
+        body: Theme(
+          data: Theme.of(context),
           child: SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 const SizedBox(height: 16),
-
-                // Profile Image and Details
                 const CircleAvatar(
                   radius: 50,
                   backgroundImage: NetworkImage(
@@ -103,17 +102,14 @@ class _ProfilePageState extends State<ProfilePage> {
                 const SizedBox(height: 8),
                 Text(
                   name,
-                  style: Theme.of(context).textTheme.titleLarge, // Use theme for text styling
+                  style: Theme.of(context).textTheme.titleLarge,
                 ),
                 const SizedBox(height: 4),
                 Text(
                   email,
-                  style: Theme.of(context).textTheme.titleMedium, // Use theme for text styling
+                  style: Theme.of(context).textTheme.titleMedium,
                 ),
-
                 const SizedBox(height: 16),
-
-                // Weight, Height, Age Section
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
@@ -124,10 +120,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     buildInfoColumn(age, "Age"),
                   ],
                 ),
-
                 Divider(thickness: 1, color: Colors.grey.shade300, height: 32),
-
-                // Mute Notification
                 ListTile(
                   leading: const Icon(Icons.notifications),
                   title: const Text("Mute Notification"),
@@ -137,8 +130,8 @@ class _ProfilePageState extends State<ProfilePage> {
                       setState(() {
                         _isMuted = value;
                       });
-                      SharedPreferences.getInstance().then(
-                              (prefs) => prefs.setBool('isMuted', value));
+                      SharedPreferences.getInstance()
+                          .then((prefs) => prefs.setBool('isMuted', value));
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
                           content: Text(
@@ -148,16 +141,13 @@ class _ProfilePageState extends State<ProfilePage> {
                           ),
                           duration: const Duration(seconds: 2),
                           behavior: SnackBarBehavior.floating,
-                          backgroundColor: _isMuted ? Colors.red : Colors.green, // Set colors
+                          backgroundColor: _isMuted ? Colors.red : Colors.green,
                         ),
                       );
                     },
                   ),
                 ),
-
                 Divider(thickness: 1, color: Colors.grey.shade300),
-
-                // Theme Toggle
                 ListTile(
                   leading: const Icon(Icons.brightness_6),
                   title: const Text("Theme Mode"),
@@ -183,18 +173,31 @@ class _ProfilePageState extends State<ProfilePage> {
                     ],
                   ),
                 ),
-
                 Divider(thickness: 1, color: Colors.grey.shade300),
-
-                // Terms & Conditions
                 buildListTile(
                   Icons.article_outlined,
                   "Terms & Conditions",
-                      () {
+                  () {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
                         builder: (context) => const TermsAndConditionsPage(),
+                      ),
+                    );
+                  },
+                ),
+                Divider(thickness: 1, color: Colors.grey.shade300),
+
+                // Logout Button
+                buildListTile(
+                  Icons.logout,
+                  "Logout",
+                  () async {
+                    await FirebaseAuth.instance.signOut();
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const LoginPage(),
                       ),
                     );
                   },
@@ -208,34 +211,31 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  // Helper method for Info Column
   Column buildInfoColumn(String value, String title) {
     return Column(
       children: [
         Text(
           value,
-          style: Theme.of(context).textTheme.bodyLarge, // Use theme for text styling
+          style: Theme.of(context).textTheme.bodyLarge,
         ),
         const SizedBox(height: 4),
         Text(
           title,
-          style: Theme.of(context).textTheme.bodyMedium, // Use theme for text styling
+          style: Theme.of(context).textTheme.bodyMedium,
         ),
       ],
     );
   }
 
-  // Helper method for ListTile
   ListTile buildListTile(IconData icon, String title, VoidCallback onTap) {
     return ListTile(
       leading: Icon(icon),
       title: Text(
         title,
-        style: Theme.of(context).textTheme.bodyLarge, // Use theme for text styling
+        style: Theme.of(context).textTheme.bodyLarge,
       ),
       trailing: const Icon(Icons.arrow_forward_ios, size: 16),
       onTap: onTap,
     );
   }
 }
-
