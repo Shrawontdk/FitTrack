@@ -199,6 +199,33 @@ class _ProfilePageState extends State<ProfilePage> {
                     );
                   },
                 ),
+                Divider(thickness: 1, color: Colors.grey.shade300),
+
+// Logout
+                buildListTile(
+                  Icons.logout,
+                  "Logout",
+                      () async {
+                    try {
+                      await FirebaseAuth.instance.signOut(); // Logout from Firebase
+                      // Navigate to the Login Page
+                      Navigator.pushAndRemoveUntil(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const LoginPage(),
+                        ),
+                            (route) => false, // Remove all previous routes
+                      );
+                    } catch (e) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text("Failed to logout: $e"),
+                          backgroundColor: Colors.red,
+                        ),
+                      );
+                    }
+                  },
+                ),
                 const SizedBox(height: 24),
               ],
             ),

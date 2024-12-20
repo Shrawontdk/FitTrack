@@ -13,6 +13,9 @@ class _HomePageState extends State<HomePage> {
     // 'assets/images/chest_workout.png',
     "https://i.pinimg.com/236x/28/87/8d/28878d2dbe8caa961e44e82978a7a01e.jpg"
   ];
+  final String dietUrl =
+      'https://i.pinimg.com/736x/c1/a3/5f/c1a35f61a8bbbc989625433174446223.jpg';
+
 
 
   List<Map<String, dynamic>> getTodayExercises() {
@@ -107,13 +110,13 @@ class _HomePageState extends State<HomePage> {
             // Daily Diet Section
             sectionHeader("Daily Diet", "See More"),
             dietCard(
-                imageUrls[0], "Breakfast", "Calories: 650 kcal", "Protein: 25g",
+                dietUrl, "Breakfast", "Calories: 650 kcal", "Protein: 25g",
                 "Fats: 28g, Carbs: 75-100g"),
             dietCard(
-                imageUrls[0], "Lunch", "Calories: 800 kcal", "Protein: 30g",
+                dietUrl, "Lunch", "Calories: 800 kcal", "Protein: 30g",
                 "Fats: 35g, Carbs: 85-110g"),
             dietCard(
-                imageUrls[0], "Dinner", "Calories: 700 kcal", "Protein: 28g",
+                dietUrl, "Dinner", "Calories: 700 kcal", "Protein: 28g",
                 "Fats: 25g, Carbs: 70-95g"),
           ],
         ),

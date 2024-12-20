@@ -172,65 +172,6 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ),
 
-                  const SizedBox(height: 20),
-
-                  // Or Connect Section
-                  const Row(
-                    children: [
-                      Expanded(
-                          child: Divider(
-                        color: Colors.grey,
-                        thickness: 1,
-                      )),
-                      Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 8),
-                        child: Text(
-                          'or connect with',
-                          style: TextStyle(color: Colors.grey),
-                        ),
-                      ),
-                      Expanded(
-                          child: Divider(
-                        color: Colors.grey,
-                        thickness: 1,
-                      )),
-                    ],
-                  ),
-
-                  const SizedBox(height: 16),
-
-                  // Google Button (optional)
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton.icon(
-                      onPressed: () {
-                        // Add your Google login logic here
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.white,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          side: BorderSide(color: Colors.grey.shade300),
-                        ),
-                      ),
-                      icon: Image.asset(
-                        'assets/images/google_icon.png', // Replace with your local Google icon
-                        width: 24,
-                        height: 24,
-                      ),
-                      label: const FittedBox(
-                        fit: BoxFit.scaleDown,
-                        child: Text(
-                          'Login using Google',
-                          style: TextStyle(
-                            color: Colors.black87,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-
                   const SizedBox(height: 24),
 
                   // Sign Up Section
