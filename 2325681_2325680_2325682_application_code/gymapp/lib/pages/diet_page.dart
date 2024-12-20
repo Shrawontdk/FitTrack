@@ -16,6 +16,11 @@ class DietPage extends StatefulWidget {
 class _DietPlanPageState extends State<DietPage> {
   final String imageUrl =
       'https://th.bing.com/th/id/OIP.dca5B7rvK8VCV_eboQecKAHaHa?rs=1&pid=ImgDetMain';
+  final String reminderUrl =
+      'https://i.pinimg.com/736x/b7/01/2c/b7012c88561f67ea58aeab13bae8612a.jpg';
+  final String dietUrl =
+      'https://i.pinimg.com/736x/c1/a3/5f/c1a35f61a8bbbc989625433174446223.jpg';
+
 
   bool _isReminderOn = false;
   DateTime? _reminderTime;
@@ -246,7 +251,7 @@ class _DietPlanPageState extends State<DietPage> {
                     Row(
                       children: [
                         Image.network(
-                          imageUrl,
+                          reminderUrl,
                           width: 40,
                           height: 40,
                           fit: BoxFit.cover,
@@ -377,7 +382,7 @@ class _DietPlanPageState extends State<DietPage> {
       child: Row(
         children: [
           Image.network(
-            imageUrl,
+            dietUrl,
             width: 60,
             height: 60,
             fit: BoxFit.cover,
